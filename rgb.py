@@ -5,7 +5,7 @@ from flair.tokenization import SegtokTokenizer
 import time
 
 
-# edit this to be a list of string you wish to correct.
+# edit this to be a list of strings you wish to correct.
 # to guarantee all formats of string are supported, it is suggested
 # you surround the strings with triple quotes (e.g. """ some text """)
 # instead of the typical 'some text' or "some text". this will allow
