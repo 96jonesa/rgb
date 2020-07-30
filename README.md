@@ -1,6 +1,6 @@
 # rgb
 
-This repo contains the processing code used in the Reddit bot https://www.reddit.com/user/---------- , which replies to new submissions and comments, correcting who to whom where appropriate just as its namesake from the TV show Friends would. The name username is obscured to prevent random people from searching for this code for the sake of spawning clones. The username is the character's first name, then last name, then Bot, with no spaces.
+This repo contains the processing code used in a Reddit bot which replies to new submissions and comments, correcting who to whom where appropriate just as its namesake from the TV show Friends would. The name username is obscured to prevent random people from searching for this code for the sake of spawning clones. The username is the character's first name, then last name, then Bot, with no spaces.
 
 In order to prevent clones from popping up, the code here is slightly modified and the Reddit interaction is removed - please do not spawn clones: they will cost you money to run, they will be a nuisance to the Reddit community, they will ruin the joke, and you will be like, totally lame if you do. Seriously, like sooo lame.
 
