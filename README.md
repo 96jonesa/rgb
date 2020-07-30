@@ -12,7 +12,13 @@ The text being processed is run through a dependency parser and a named entity r
 
 Before bothering to install dependencies: if you only want to tinker with the code as a demo, then the Colab notebook version will suffice and save you some time and resources.
 
-Navigate to the 
+Navigate to the rgb.ipynb file in this repo. At the top of the file, you will see an 'Open in Colab' button. Click it.
+
+You may need to log in to a Google Drive account to proceed.
+
+Modify the text_list variable at the top of the file to contain whatever list of texts you wish to process, or just use the default texts.
+
+Run it by pressing Ctrl+F9 (or Cmd+F9), by navigating to Runtime > Run all, or by running each cell individually in order.
 
 # Installation
 
