@@ -1,3 +1,6 @@
+!pip install spacy
+!pip install flair
+
 import spacy
 from flair.data import Sentence
 from flair.models import SequenceTagger
@@ -14,7 +17,6 @@ import time
 # \" because it will read the first three " characters, then the fourth
 # will confuse it.
 text_list = ["""this is
-
 some 'text'""",
 """who is he speaking to?""",
 """He shouted at The Who""",
@@ -36,51 +38,28 @@ def i_span(doc, token):
         return i_head, i_token, False
 
 
-# checks for proceeding ' or " characters, which produce false flags
+# checks for various surrounding tokens which produce false flags
 # due to the typically terrible overall grammar and prevelance of
 # typos in forum posts written with these.
-def check_for_quotes(doc, token):
-
-    i = token.i
-
-    if len(doc) > i + 1:
-        return (doc[i + 1].text.lower in ['\'s', '\"', '\'re', '\'ve'])
-    else:
-        return False
-
-
-# to avoid common false flags due to the phrase 'who the fuck'.
-# quote check is performed here to avoid extra overhead in some cases.
-def check_for_the_fuck(doc, token):
-
-    i = token.i
-
-    if doc[i + 1].text.lower() in ['tf', '\'s', '\"', '\'re', '\'ve']:
-        return True
-
-    if len(doc) > i + 2:
-        the_check = doc[i + 1].text.lower() in ['the', 'teh', 'th3', 't3h', 'da', 'd4', 'tha', 'th4', 't']
-        fuck_check = doc[i + 2].text.lower() in ['fuck', 'fck', 'fk', 'f', 'fuuck', 'fuuuck', 'fuuuuck', 'fuuuuuck']
-
-        if the_check:
-            if fuck_check:
-                return True
-
-    return False
-
-
-# to avoid references to the band The Who, which is often missed by named
-# entity recognizers due to simplicity, lack of context, and improper
-# capitalization. also checks for preceeding " character which often leads
-# to false flags.
-def check_for_the_who(doc, token):
+def check_for_exceptions(doc, token):
 
     i = token.i
 
     if i > 0 and doc[i - 1].text.lower() in ['the', '\"']:
         return True
 
-    return False
+    if len(doc) > i + 1:
+        if doc[i + 1].text.lower in ['tf', '\'s', '\"', '\'re', '\'ve']:
+            return True
+
+    if len(doc) > i + 2:
+        the_check = doc[i + 1].text.lower() in ['the', 'teh', 'th3', 't3h', 'da', 'd4', 'tha', 'th4', 't']
+        fuck_check = doc[i + 2].text.lower() in ['fuck', 'fck', 'fk', 'f', 'fuuck', 'fuuuck', 'fuuuuck', 'fuuuuuck']
+
+        if the_check and fuck_check:
+            return True
+
+    return False;
 
 
 # use all caps or Spongebob-case if being used, otherwise append lowercase m.
@@ -119,10 +98,8 @@ def correct_who_to_whom(text):
         if token.text.lower() == 'who' :
             if token.dep_ in ['dobj', 'iobj', 'pobj']:
 
-                # make sure it is not a reference to the hit band The Who,
-                # which is often missed by named entity recognizers due to
-                # simplicity, lack of context, and improper capitalization.
-                if not check_for_the_who(doc, token):
+                # check for the hard-coded exceptions
+                if not check_for_exceptions(doc, token):
                     should_be_whom = True
 
                     sentence = Sentence(text, use_tokenizer=SegtokTokenizer())
@@ -138,33 +115,21 @@ def correct_who_to_whom(text):
                         phrase_start, phrase_end, whom_first = i_span(doc, token)
 
                         if whom_first:
-                            # phrases like 'who the fuck' produce tons of false flags.
-                            # this check also checks for proceeding ' or " characters,
-                            # which produce false flags due to the typically terrible
-                            # overall grammar and prevelance of typos in forum posts
-                            # written with these.
-                            if not check_for_the_fuck(doc, token):
+                            # detokenizes the corrected excerpt (e.g. removes added space
+                            # between last word in sentence and punctutation, rejoins
+                            # don and 't to form don't, etc., only if such joins were
+                            # present in the original text)
+                            phrase = whom_string(token.text) + (''.join([tkn.text_with_ws for tkn in doc[phrase_start:phrase_end + 1]]))[3:]
 
-                                # detokenizes the corrected excerpt (e.g. removes added space
-                                # between last word in sentence and punctutation, rejoins
-                                # don and 't to form don't, etc., only if such joins were
-                                # present in the original text)
-                                phrase = whom_string(token.text) + (''.join([tkn.text_with_ws for tkn in doc[phrase_start:phrase_end + 1]]))[3:]
-
-                                phrases.append(phrase)
+                            phrases.append(phrase)
                         else:
-                            # checks for proceeding ' or " characters, which produce false flags
-                            # due to the typically terrible overall grammar and prevelance of
-                            # typos in forum posts written with these.
-                            if not check_for_quotes(doc, token):
+                            # detokenizes the corrected excerpt (e.g. removes added space
+                            # between last word in sentence and punctutation, rejoins
+                            # don and 't to form don't, etc., only if such joins were
+                            # present in the original text)
+                            phrase = ''.join([tkn.text_with_ws for tkn in doc[phrase_start:phrase_end]]) + whom_string(token.text)
 
-                                # detokenizes the corrected excerpt (e.g. removes added space
-                                # between last word in sentence and punctutation, rejoins
-                                # don and 't to form don't, etc., only if such joins were
-                                # present in the original text)
-                                phrase = ''.join([tkn.text_with_ws for tkn in doc[phrase_start:phrase_end]]) + whom_string(token.text)
-
-                                phrases.append(phrase)
+                            phrases.append(phrase)
 
     # if any corrections were found, then print the original text and the corrections.
     if phrases:
