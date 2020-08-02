@@ -1,6 +1,3 @@
-!pip install spacy
-!pip install flair
-
 import spacy
 from flair.data import Sentence
 from flair.models import SequenceTagger
