@@ -56,7 +56,7 @@ def check_for_exceptions(doc, token):
         if the_check and fuck_check:
             return True
 
-    return False;
+    return False
 
 
 # use all caps or Spongebob-case if being used, otherwise append lowercase m.
