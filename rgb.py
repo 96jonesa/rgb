@@ -16,6 +16,7 @@ import time
 text_list = ["""this is
 some 'text'""",
 """who is he speaking to?""",
+"""who's he speaking to?""",
 """He shouted at The Who""",
 """He shouted at who?"""]
 
@@ -46,7 +47,9 @@ def check_for_exceptions(doc, token):
         return True
 
     if len(doc) > i + 1:
-        if doc[i + 1].text.lower in ['tf', '\'s', '\"', '\'re', '\'ve']:
+        if doc[i + 1].text.lower in ['tf', '\"']:
+            return True
+        if doc[i + 1].text[0] == '\'':
             return True
 
     if len(doc) > i + 2:
