@@ -53,6 +53,6 @@ The first time you run it, it will automatically download the named entity recog
 
 A few days ago my buddy called me up and said "Andy you know how in the show Friends Ross is always correcting people when they say who instead of whom? You should make a Reddit bot that does that!"
 
-And so I did.
+So I did.
 
 https://github.com/hailrobotoverlords AKA Gary from the Garage
