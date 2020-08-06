@@ -16,6 +16,10 @@ Basically:
 4. Check for exceptions
 5. Correct to 'whom'
 
+# Much More Usable Tool
+
+https://github.com/96jonesa/whominator
+
 # Use via Colab
 
 Before bothering to install dependencies: if you only want to tinker with the code as a demo, then the Colab notebook version will suffice and save you some time and resources.
